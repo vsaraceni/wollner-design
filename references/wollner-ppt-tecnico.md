@@ -1,0 +1,427 @@
+# Wollner PPT: Referência Técnica
+
+## Parâmetros de módulo por tamanho de deck
+
+### Deck padrão 720x405pt (16:9)
+
+| Parâmetro          | pt     | px     | Derivação          |
+|--------------------|--------|--------|--------------------|
+| Módulo base        | 12pt   | 16px   | definição inicial  |
+| Margem lateral     | 48pt   | 64px   | 4× módulo          |
+| Margem vertical    | 36pt   | 48px   | 3× módulo          |
+| Calha de coluna    | 24pt   | 32px   | 2× módulo          |
+| Largura útil       | 624pt  | 832px  | 720 − 2×48         |
+| Col. 2 colunas     | 300pt  | 400px  | (624 − 24) / 2     |
+| Col. 3 colunas     | 192pt  | 256px  | (624 − 2×24) / 3   |
+| Line-height corpo  | 1.5    | 1.5    | padrão legibilidade|
+| Line-height título | 1.1    | 1.1    | compressão display |
+
+### Conversão pt ⇄ px em pipelines html2pptx
+
+Puppeteer renderiza em px; html2pptx converte para pt no PPTX final. A razão é **1pt = 1.333px** (96 DPI / 72pt por polegada).
+
+**Regra de conformidade modular:**
+- Em **px**: valores devem ser múltiplos de **4px** (= ¼ módulo = 3pt equivalente). Preferir múltiplos de 8px.
+- Em **pt**: valores devem ser múltiplos de **3pt**. Preferir múltiplos de 6pt.
+- **Não misturar unidades no mesmo gerador.** Escolher px **ou** pt por arquivo e manter coerência.
+
+**Por que ambas as unidades são válidas:** o que importa para o método Ulm/Wollner é o *ritmo modular cartesiano*, não a unidade física. Um deck consistentemente construído em múltiplos de 4px tem o mesmo rigor estrutural que um em múltiplos de 3pt — muda apenas o rótulo.
+
+**Quando preferir px:** gerador JavaScript/Node que lê do DOM ou interage com Puppeteer. É a unidade nativa do browser e evita conversões implícitas.
+
+**Quando preferir pt:** geração de PDF via bibliotecas tipográficas (ex: jsPDF, docx), ou quando os valores vão ser lidos por humanos que pensam em "pontos de fonte".
+
+**Escala tipográfica equivalente:**
+
+| Função    | pt     | px     |
+|-----------|--------|--------|
+| Display   | 48pt   | 64px   |
+| Título    | 32pt   | 42px ou 44px (múltiplo de 4, arred.) |
+| Subtítulo | 20pt   | 28px (arred. up, múltiplo de 4) |
+| Corpo     | 16pt   | 22px   |
+| Caption   | 12pt   | 16px   |
+
+Arredondamentos: a conversão matemática é 32×1.333=42.66px, mas como px inteiro, escolher 42px (próximo) ou 44px (mais legível; ainda múltiplo de 4). Essas escolhas não violam o método desde que consistentes dentro do deck.
+
+## CSS base para cada tipo de slide
+
+### Container universal
+
+```css
+width: 720pt;
+height: 405pt;
+position: relative;
+overflow: hidden;
+font-family: Arial, Helvetica, sans-serif;
+```
+
+### Área útil (inner wrapper)
+
+```css
+position: absolute;
+top: 36pt;
+left: 48pt;
+right: 48pt;
+bottom: 36pt;
+```
+
+### Acento lateral (barra vertical decorativa)
+
+```css
+position: absolute;
+top: 0;
+right: 0;         /* ou left: 0 */
+width: 6pt;       /* 0.5x módulo */
+height: 100%;
+background: [cor-acento];
+```
+
+### Acento superior (barra horizontal)
+
+```css
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 4pt;
+background: [cor-acento];
+```
+
+### Bullets são marcadores tipográficos, não elementos gráficos
+
+Bullet de lista deve ser marcador da própria tipografia (`::marker` em `<ul>` + `list-style`), não um `<div>` quadrado posicionado ao lado do `<p>`. O bullet pertence ao texto, acompanha o texto quando o texto quebra linha, e é editável como parte do conteúdo, não como bloco gráfico separado.
+
+**Template canônico de lista Wollner (quadrado sólido):**
+
+```html
+<ul class="w-list">
+  <li>Primeiro item da lista.</li>
+  <li>Segundo item, eventualmente mais longo e que pode quebrar em duas linhas sem perder o alinhamento do marcador.</li>
+</ul>
+```
+
+```css
+.w-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.w-list li {
+  position: relative;
+  padding-left: 16pt;
+  margin-bottom: 10pt;
+  font-size: 12pt;
+  color: [cor-texto];
+  line-height: 1.4;
+}
+.w-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;           /* alinhado com a capital, não com a descida */
+  width: 6pt;
+  height: 6pt;
+  background: [cor-acento];
+}
+```
+
+Variantes:
+- **Quadrado sólido** (padrão Wollner): `width/height:6pt; background:cor;`
+- **Quadrado vazado**: `border:1pt solid cor; background:transparent;`
+- **Linha horizontal fina** (dash editorial): `width:8pt; height:1pt; top:0.7em;`
+
+**Por que `::before` e não `list-style-type: square`:**
+- `list-style-type: square` do HTML tem cor, tamanho e posicionamento controlados pelo renderer — imprevisível entre navegadores e no Puppeteer/html2pptx.
+- `::before` dá controle total sobre cor, tamanho, alinhamento vertical (`top:0.45em` casa com a altura-x da fonte), e funciona identicamente em html2pptx.
+
+**Nunca usar:**
+- `<div>` com `width:6px; height:6px` ao lado do `<p>` como bullet. Quebra em quebra de linha, exige `flex align-items:flex-start` e `margin-top:6px` arbitrário, e vira elemento gráfico dissociado do texto.
+- Caracteres Unicode tipo `•` ou `■` no texto. Dependem da fonte disponível no PPTX, variam de tamanho, não dão controle de cor independente.
+
+### Robustez de layout: rótulos atômicos e flex-wrap
+
+Caixas de texto em grids apertados quebram linhas em lugares errados ("78" + "%" separados, "Sistema garante" em duas linhas, "48pt lateral, 36pt" + "vertical" em linha separada). Três princípios para robustez:
+
+**1. Rótulos atômicos com `white-space:nowrap`.** Qualquer elemento cujo sentido se perde com quebra no meio:
+- Nome de cor, hex code, número+unidade ("12pt", "48pt")
+- Label UPPERCASE curto (até 3 palavras): "DISPLAY", "CAPA", "DADO"
+- Título de card/coluna: "Sistema garante", "Nunca"
+
+**2. Container flexível via `flex-wrap:wrap`**, não `flex:1` forçado. Cada item mantém sua largura natural. Se falta espaço, a linha inteira quebra (não uma palavra solta).
+
+```css
+display: flex;
+gap: 20pt;
+flex-wrap: wrap;
+```
+
+**3. Encurtar o rótulo antes de espremer o container.**
+- "48pt lateral, 36pt vertical" → "48/36pt"
+- "Colunas 3 × 192pt + calha 24pt" → separar em "Colunas 3 × 192pt" + "Calha 24pt"
+
+Rótulos atômicos curtos são mais robustos e mais Wollner.
+
+**Não usar `nowrap`** em subtítulos longos, descrições, parágrafos de corpo — deixar quebrar naturalmente.
+
+### Barra inscrita dentro de card arredondado
+
+Barra de acento posicionada dentro de um card com `border-radius` é **inscrita**: mais curta que o card nos dois eixos, afastada também da borda lateral, e arredondada nos **quatro cantos** com seu próprio raio pequeno.
+
+```css
+/* Card com border-radius: 4-6pt (raio sutil preferido) */
+position: absolute;
+top: 24pt;       /* offset vertical = ~2× radius do card, com folga */
+bottom: 24pt;
+left: 12pt;      /* offset horizontal — NÃO colar em left:0 ou right:0 */
+width: 4pt;
+background: [cor-acento];
+border-radius: 2pt;  /* 4 cantos, sem valores 0 */
+```
+
+E reservar `padding-left` (ou `padding-right`) extra no card para o conteúdo não encostar na barra (ex.: `padding: 24pt 24pt 24pt 36pt`).
+
+**Regras de consistência:**
+
+1. **Raio do card sutil.** Usar 4pt em mini-cards (thumbs, swatches) e 6pt em cards de conteúdo. Evitar 8–12pt — fica infantil e aumenta o desencontro com a barra inscrita.
+2. **Barra sempre arredondada nos 4 cantos.** Nunca `border-radius: 0 2pt 2pt 0` ou análogo. Usar `border-radius: 2pt` uniforme. A barra é um elemento próprio, não uma extensão da borda do card.
+3. **Offset horizontal obrigatório.** Barra nunca em `left:0` ou `right:0`. Afastar ao menos 8–12pt da borda interna para que os dois raios diferentes (card e barra) não disputem a mesma quina.
+4. **Offset vertical com folga.** Top/bottom ≥ 2× radius do card. Isso garante que o arco do card já terminou antes da barra começar.
+
+**Por que todas essas regras:** radius de barra fina (2pt) e radius de card são arcos de raios diferentes. Se ocupam o mesmo canto, os arcos não casam e aparece um "dente" visual. A barra inscrita com offset nos dois eixos resolve estruturalmente: os dois elementos nunca competem pelo mesmo pixel.
+
+**Não usar:** `border-left/right/top/bottom: Npx solid` em cards arredondados. A borda CSS é reta internamente mesmo com radius. Trocar por barra inscrita conforme acima.
+
+## Escala tipográfica completa
+
+```css
+/* Display — capa */
+font-size: 48pt; font-weight: bold; line-height: 1.0; color: #FFFFFF;
+
+/* Título — slide normal */
+font-size: 32pt; font-weight: bold; line-height: 1.1; color: #1A1A1A;
+
+/* Subtítulo / label de seção */
+font-size: 20pt; font-weight: normal; line-height: 1.2; color: #1A1A1A;
+
+/* Corpo */
+font-size: 16pt; font-weight: normal; line-height: 1.5; color: #1A1A1A;
+
+/* Caption / footnote */
+font-size: 12pt; font-weight: normal; line-height: 1.4; color: #555555;
+```
+
+## Paletas pré-definidas
+
+### Wollner Neutro (padrão)
+```
+#1A1A1A  primária (texto)
+#F5F5F0  fundo
+#0055A4  acento (azul institucional)
+```
+
+### Wollner Escuro (capa, seção)
+```
+#1A1A1A  fundo
+#F5F5F0  texto
+#E8C84A  acento (amarelo)
+```
+
+### Padrão de 6 slots (marca com cor institucional + acento)
+
+Quando a marca do projeto já define primária, fundo claro e acento, este padrão de 6 slots funciona bem:
+
+```
+[PRIMÁRIA]    âncora — títulos, logotipo, CTAs
+[FUNDO-CLARO] fundo de seções secundárias e cards; NUNCA texto
+[ACENTO]      máximo 10% da composição — dados, highlights, barras
+[CORPO]       texto de corpo em fundo claro (≠ preto puro)
+[CAPTION]     caption e label secundário (contraste reduzido)
+#ffffff       fundo principal
+```
+
+Regras de proporção e aplicação não mudam: 60% fundo / 30% primária / 10% acento. Uma única família tipográfica por deck. Raio de cards: 4pt (mini) ou 6pt (conteúdo). A paleta concreta é derivada da marca do projeto durante a entrevista inicial (ver SKILL.md, Etapa 1).
+
+## Layouts HTML completos
+
+### Capa
+
+```html
+<div style="width:720pt; height:405pt; background:#1A1A1A; font-family:Arial,Helvetica,sans-serif; position:relative; overflow:hidden;">
+  <!-- Acento lateral -->
+  <div style="position:absolute; top:0; left:0; width:8pt; height:100%; background:#0055A4;"></div>
+  <!-- Conteúdo no terço inferior -->
+  <div style="position:absolute; bottom:60pt; left:72pt; right:48pt;">
+    <p style="font-size:14pt; color:#0055A4; margin:0 0 12pt 0; letter-spacing:2pt; text-transform:uppercase;">SUBTÍTULO OU CATEGORIA</p>
+    <h1 style="font-size:48pt; font-weight:bold; color:#F5F5F0; margin:0 0 16pt 0; line-height:1.0;">Título principal do deck</h1>
+    <p style="font-size:16pt; color:#888888; margin:0;">Organização · Data</p>
+  </div>
+</div>
+```
+
+### Slide de tese (1 ideia)
+
+```html
+<div style="width:720pt; height:405pt; background:#F5F5F0; font-family:Arial,Helvetica,sans-serif; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:0; left:0; right:0; height:4pt; background:#0055A4;"></div>
+  <div style="position:absolute; top:36pt; left:48pt; right:48pt; bottom:36pt;">
+    <h1 style="font-size:32pt; font-weight:bold; color:#1A1A1A; margin:0 0 36pt 0; line-height:1.1;">Título da tese</h1>
+    <p style="font-size:16pt; color:#1A1A1A; line-height:1.5; max-width:500pt;">Corpo do argumento central. Máximo 3-4 linhas. Uma ideia por slide.</p>
+  </div>
+</div>
+```
+
+### Slide de 2 colunas
+
+```html
+<div style="width:720pt; height:405pt; background:#F5F5F0; font-family:Arial,Helvetica,sans-serif; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:36pt; left:48pt; right:48pt; bottom:36pt;">
+    <h1 style="font-size:32pt; font-weight:bold; color:#1A1A1A; margin:0 0 24pt 0; line-height:1.1;">Título</h1>
+    <div style="display:flex; gap:24pt; align-items:flex-start;">
+      <div style="flex:1;">
+        <p style="font-size:20pt; font-weight:bold; color:#0055A4; margin:0 0 12pt 0;">Label A</p>
+        <p style="font-size:16pt; color:#1A1A1A; line-height:1.5; margin:0;">Conteúdo da coluna esquerda.</p>
+      </div>
+      <div style="width:1pt; background:#CCCCCC; align-self:stretch;"></div>
+      <div style="flex:1;">
+        <p style="font-size:20pt; font-weight:bold; color:#0055A4; margin:0 0 12pt 0;">Label B</p>
+        <p style="font-size:16pt; color:#1A1A1A; line-height:1.5; margin:0;">Conteúdo da coluna direita.</p>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### Slide de processo (3 etapas)
+
+```html
+<div style="width:720pt; height:405pt; background:#F5F5F0; font-family:Arial,Helvetica,sans-serif; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:36pt; left:48pt; right:48pt; bottom:36pt;">
+    <h1 style="font-size:32pt; font-weight:bold; color:#1A1A1A; margin:0 0 36pt 0;">Título do processo</h1>
+    <div style="display:flex; gap:0; align-items:flex-start;">
+      <!-- Etapa 1 -->
+      <div style="flex:1; text-align:center;">
+        <div style="width:48pt; height:48pt; background:#0055A4; margin:0 auto 12pt auto; display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:24pt; font-weight:bold; color:#F5F5F0;">1</span>
+        </div>
+        <p style="font-size:16pt; font-weight:bold; color:#1A1A1A; margin:0 0 8pt 0;">Etapa</p>
+        <p style="font-size:12pt; color:#555555; line-height:1.4; margin:0;">Descrição breve da etapa.</p>
+      </div>
+      <!-- Seta -->
+      <div style="width:24pt; padding-top:20pt; text-align:center; color:#CCCCCC; font-size:20pt;">→</div>
+      <!-- Etapa 2 -->
+      <div style="flex:1; text-align:center;">
+        <div style="width:48pt; height:48pt; background:#0055A4; margin:0 auto 12pt auto; display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:24pt; font-weight:bold; color:#F5F5F0;">2</span>
+        </div>
+        <p style="font-size:16pt; font-weight:bold; color:#1A1A1A; margin:0 0 8pt 0;">Etapa</p>
+        <p style="font-size:12pt; color:#555555; line-height:1.4; margin:0;">Descrição breve da etapa.</p>
+      </div>
+      <!-- Seta -->
+      <div style="width:24pt; padding-top:20pt; text-align:center; color:#CCCCCC; font-size:20pt;">→</div>
+      <!-- Etapa 3 -->
+      <div style="flex:1; text-align:center;">
+        <div style="width:48pt; height:48pt; background:#0055A4; margin:0 auto 12pt auto; display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:24pt; font-weight:bold; color:#F5F5F0;">3</span>
+        </div>
+        <p style="font-size:16pt; font-weight:bold; color:#1A1A1A; margin:0 0 8pt 0;">Etapa</p>
+        <p style="font-size:12pt; color:#555555; line-height:1.4; margin:0;">Descrição breve da etapa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### Slide de número grande (destaque estatístico)
+
+```html
+<div style="width:720pt; height:405pt; background:#F5F5F0; font-family:Arial,Helvetica,sans-serif; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:0; right:0; width:6pt; height:100%; background:#0055A4;"></div>
+  <div style="position:absolute; top:36pt; left:48pt; right:72pt; bottom:36pt; display:flex; flex-direction:column; justify-content:center;">
+    <p style="font-size:14pt; color:#0055A4; margin:0 0 8pt 0; letter-spacing:2pt; text-transform:uppercase;">Dado relevante</p>
+    <p style="font-size:96pt; font-weight:bold; color:#1A1A1A; margin:0; line-height:1.0;">78%</p>
+    <p style="font-size:20pt; color:#1A1A1A; margin:12pt 0 0 0;">Descrição do que esse número significa.</p>
+    <p style="font-size:12pt; color:#888888; margin:16pt 0 0 0;">Fonte: nome da fonte, ano</p>
+  </div>
+</div>
+```
+
+## Gotchas html2pptx no Windows
+
+1. **charset**: sempre incluir `<meta charset="utf-8">` no HTML pai
+2. **dimensões do slide**: definir `width:720pt; height:405pt; margin:0; padding:0; overflow:hidden` em `html, body` no `<style>` do head. Não envolver tudo num div-wrapper extra — o próprio `<body>` é o slide
+3. **position absolute**: funciona, mas elementos filhos precisam de `position:relative` no pai
+4. **flex + flex-wrap**: AMBOS suportados. `flex-wrap:wrap` é inclusive recomendado em footers métricos e barras de rótulos atômicos — dá robustez quando o conteúdo excede a largura
+5. **data URI**: imagens embutidas funcionam, preferir PNG em base64; ler de arquivo temporário (`/tmp/logo-b64.txt`) via `fs.readFileSync` no gerador
+6. **border-radius**: suporte pleno, mas preferir raios sutis (4–6pt) — ver seção "Barra inscrita dentro de card arredondado"
+7. **gradiente**: NÃO usar (não renderiza corretamente e viola o método Wollner)
+8. **fontes externas via Google Fonts**: o `<link>` não carrega no Puppeteer headless; declarar a família na cadeia `font-family` com fallback web-safe (`'Rubik', Arial, sans-serif`) e aceitar que a renderização final usa o fallback — ou embutir @font-face com base64 da fonte
+
+## Workflow de revisão visual antes do build PPTX
+
+A regra é: **nunca construir o PPTX sem passar por screenshot dos HTMLs primeiro**. Build → upload → olhar o PPTX no Drive é um loop de 2 minutos por iteração. Screenshot do HTML é de 3 segundos.
+
+Pipeline padrão em três arquivos:
+
+```
+projeto/
+├── gen-slides.js      # gera slides/*.html a partir das constantes de design
+├── screenshot.js      # roda playwright em cada HTML, emite out/thumbs/*.png
+└── build.js           # loop final: html2pptx em cada HTML → out/deck.pptx
+```
+
+**screenshot.js de referência** (viewport 960×540 = 720×405pt em escala 1.333x):
+
+```js
+const { chromium } = require('playwright');
+const fs = require('fs'), path = require('path');
+
+(async () => {
+  const browser = await chromium.launch();
+  const context = await browser.newContext({ viewport: { width: 960, height: 540 } });
+  const page = await context.newPage();
+  const slides = fs.readdirSync('slides').filter(f => f.endsWith('.html'));
+  fs.mkdirSync('out/thumbs', { recursive: true });
+  for (const s of slides) {
+    await page.goto('file://' + path.resolve('slides', s));
+    await page.screenshot({ path: `out/thumbs/${s.replace('.html', '.png')}` });
+    console.log('shot', s.replace('.html', '.png'));
+  }
+  await browser.close();
+})();
+```
+
+**Ciclo de iteração:**
+1. Editar `gen-slides.js`
+2. `node gen-slides.js && node screenshot.js`
+3. Abrir PNG afetado e conferir: colapso, corte, sobreposição, raio, alinhamento
+4. Iterar na HTML até o PNG estar limpo
+5. Só então rodar `build.js` + upload
+
+**Por que isso importa:** html2pptx renderiza via Puppeteer, o mesmo motor do playwright. O PNG do screenshot é quase idêntico ao slide final do PPTX. Bugs de layout que aparecem no PNG aparecem no PPTX. Corrigir no loop curto.
+
+## Checklist de robustez por slide
+
+Antes de aceitar um slide como pronto, rodar mentalmente este checklist contra o screenshot:
+
+**Texto:**
+- [ ] Nenhum rótulo atômico quebrou no meio ("78" + "%", "Branc" + "o", etc.)?
+- [ ] Nenhum título de card quebrou em duas linhas indevidamente?
+- [ ] Nenhum texto está sendo cortado por `overflow:hidden`?
+- [ ] Footer métrico (com múltiplos rótulos curtos) está inteiro numa linha ou quebra em linha inteira, não em palavra solta?
+
+**Cantos e raios:**
+- [ ] Raio dos cards é sutil (4pt mini, 6pt conteúdo)?
+- [ ] Toda barra inscrita tem `border-radius:2pt` uniforme (4 cantos)?
+- [ ] Toda barra inscrita tem offset dos dois eixos (não em `left:0`/`right:0`)?
+- [ ] Card com barra inscrita tem padding extra no lado da barra?
+
+**Hierarquia:**
+- [ ] Máximo 3 cores no slide (fundo, primária, acento)?
+- [ ] Máximo 3 tamanhos de fonte?
+- [ ] Bullets são `<ul>` + `::before`, não `<div>` ao lado de `<p>`?
+- [ ] Geometria é elementar (quadrado, círculo, triângulo, linha)?
+
+**Grid:**
+- [ ] Todos os valores de espaço são múltiplos do módulo base?
+- [ ] Nenhum elemento invade a margem (48pt lateral, 36pt vertical)?
+- [ ] Logo do rodapé não está sendo comprimido por flex?

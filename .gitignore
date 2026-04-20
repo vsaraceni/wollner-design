@@ -1,0 +1,8 @@
+node_modules/
+package-lock.json
+yarn.lock
+out/
+slides/
+.wollner-extract-tmp.png
+.DS_Store
+Thumbs.db
