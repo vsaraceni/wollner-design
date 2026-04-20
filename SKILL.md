@@ -248,6 +248,7 @@ Ver `scripts/README.md` para comandos exatos e `scripts/requirements.md` para in
 - [ ] Raio de cards é sutil (4pt mini, 6pt conteúdo)
 - [ ] Barras inscritas têm `border-radius:2pt` nos 4 cantos e offset nos dois eixos
 - [ ] Logo no rodapé não está sendo comprimido por flex (`flex-shrink:0`)
+- [ ] Todas as imagens passaram pela auditoria de proporção: ratio da célula no slide vs. ratio do arquivo original. Diferença > 20% = flag. Corrigir com crop (sharp) ou ajustar dimensões da célula.
 
 Detalhes, CSS de referência e gotchas em `references/wollner-ppt-tecnico.md`.
 
@@ -307,6 +308,8 @@ Detalhes, CSS de referência e gotchas em `references/wollner-ppt-tecnico.md`.
 | Barra inscrita com `border-radius` assimétrico (valor 0 em algum canto) | A barra tem raio próprio; raio parcial parece bug de renderização |
 | Barra colada em `left:0` / `right:0` dentro de card arredondado | Dois raios diferentes competem pela mesma quina → "dente" visual |
 | `flex:1` uniforme em container com rótulos atômicos | Comprime rótulos curtos e quebra "78%" em "78" + "%"; usar `flex-wrap:wrap` |
+| Imagem renderizada em proporção diferente do arquivo original | Usar sempre `object-fit:cover` + `object-position` em células cujas dimensões não casam com a proporção da imagem. Nunca usar `width:100%;height:100%` sem position:absolute em célula flex — causa esticamento. A célula container deve ter `position:relative;overflow:hidden` e a img `position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover`. |
+| Imagem portrait forçada em célula landscape (ou vice-versa) sem crop intencional | Calcular a proporção da imagem original antes de definir a célula. Se a célula for muito mais larga que alta e a imagem for portrait, o resultado será sempre distorcido — redimensionar a imagem com sharp (crop centrado) ou ajustar o layout da célula para combinar com a proporção da foto. |
 
 ---
 

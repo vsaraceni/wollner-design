@@ -22,6 +22,42 @@ Valores canônicos de largura para divisões de colunas de layout:
 
 **Regra de largura do bloco título/subtítulo:**
 
+**Auditoria de proporção de imagens:**
+
+Antes de renderizar o deck, verificar se a proporção (ratio = width/height) da célula HTML onde cada imagem será exibida é compatível com a proporção do arquivo de origem. Incompatibilidades causam esticamento mesmo com `object-fit:cover`.
+
+**Snippet de auditoria a rodar no início de todo build.js:**
+
+```javascript
+const sharp = require('sharp'); // npm -g sharp
+async function auditarImagens(imagens) {
+  // imagens = [{ src, cellW, cellH, label }]
+  for (const { src, cellW, cellH, label } of imagens) {
+    const meta = await sharp(src).metadata();
+    const ratioImg  = meta.width / meta.height;
+    const ratioCel  = cellW / cellH;
+    const desvio    = Math.abs(ratioImg - ratioCel) / ratioCel;
+    const status    = desvio > 0.20 ? '⚠ CROP NECESSÁRIO' : '✓ OK';
+    console.log(`[${status}] ${label}: img ${ratioImg.toFixed(2)} vs célula ${ratioCel.toFixed(2)} (desvio ${(desvio*100).toFixed(0)}%)`);
+  }
+}
+```
+
+**Regras de correção:**
+- Desvio ≤ 20% → aceitar com `object-fit:cover`
+- Desvio > 20% e imagem portrait em célula landscape → fazer crop com sharp antes do build
+- Desvio > 20% e imagem landscape em célula portrait → ajustar largura da célula ou fazer crop
+- Crop canônico com sharp: `sharp(src).extract({ left, top, width, height }).toFile(out)`
+- Para portrait 3:4: `height = original_h; width = height * 0.75; left = (original_w - width) / 2`
+- Para landscape 4:3: `width = original_w; height = width * 0.75; top = (original_h - height) / 2`
+
+**Gotcha:** células com `flex:1` e `height:100%` sem `position:relative` não respeitam o `object-fit`. Estrutura obrigatória para célula de imagem flex:
+```html
+<div style="flex:1;position:relative;overflow:hidden;border-radius:4pt;">
+  <img src="..." style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center top;">
+</div>
+```
+
 **Regra de clearance do logo (zona de exclusão):**
 
 O logo posicionado em `tr` (top-right) ocupa um retângulo absoluto no slide: `x = 720−36−72 = 612pt` até `684pt`, `y = 36pt` até `67pt`. Nenhum conteúdo pode entrar nessa zona.
