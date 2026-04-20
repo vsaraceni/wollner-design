@@ -25,7 +25,13 @@ const PPTX_OUT = path.join(OUT_DIR, 'deck.pptx');
 // 16:9 Wollner canônico. Para outros ratios, ajustar ambos consistentemente.
 const SLIDE_W_PT = 720;
 const SLIDE_H_PT = 405;
-const SCALE = 2; // 2x para telas Retina e impressão digital
+// 1pt = 1.333px (96 DPI / 72). O viewport em px PRECISA casar com o tamanho
+// declarado do HTML (em pt); senão o conteúdo renderiza em ~56% do screenshot
+// e o PPTX final sai com uma "ilha" no canto superior-esquerdo.
+const PX_PER_PT = 96 / 72;
+const SLIDE_W_PX = Math.round(SLIDE_W_PT * PX_PER_PT); // 960
+const SLIDE_H_PX = Math.round(SLIDE_H_PT * PX_PER_PT); // 540
+const SCALE = 2; // deviceScaleFactor — gera PNG 2x para nitidez
 
 (async () => {
   if (!fs.existsSync(SLIDES_DIR)) {
@@ -40,8 +46,8 @@ const SCALE = 2; // 2x para telas Retina e impressão digital
 
   const browser = await chromium.launch();
   const ctx = await browser.newContext({
-    viewport: { width: SLIDE_W_PT * SCALE, height: SLIDE_H_PT * SCALE },
-    deviceScaleFactor: 1,
+    viewport: { width: SLIDE_W_PX, height: SLIDE_H_PX },
+    deviceScaleFactor: SCALE,
   });
   const page = await ctx.newPage();
 
@@ -54,7 +60,7 @@ const SCALE = 2; // 2x para telas Retina e impressão digital
     const shot = path.join(SHOTS_DIR, file.replace(/\.html$/, '.png'));
 
     await page.goto('file://' + src.replace(/\\/g, '/'));
-    await page.screenshot({ path: shot, clip: { x: 0, y: 0, width: SLIDE_W_PT * SCALE, height: SLIDE_H_PT * SCALE } });
+    await page.screenshot({ path: shot, clip: { x: 0, y: 0, width: SLIDE_W_PX, height: SLIDE_H_PX } });
 
     const slide = pptx.addSlide();
     slide.addImage({ path: shot, x: 0, y: 0, w: SLIDE_W_PT / 72, h: SLIDE_H_PT / 72 });
