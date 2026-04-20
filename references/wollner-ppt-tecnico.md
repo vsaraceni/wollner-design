@@ -20,6 +20,12 @@ Valores canônicos de largura para divisões de colunas de layout:
 
 **Nunca usar valores arbitrários** como 368pt, 436pt, 310pt, 330pt, 320pt. Se um valor não for derivável da tabela acima, revisar o layout.
 
+**Regra de largura do bloco título/subtítulo:**
+
+O h1 (título) e o p de subtítulo imediatamente abaixo nunca devem ultrapassar **2/3 da largura total do slide** (480pt de 720pt). Essa regra garante espaço livre no canto onde o logo é posicionado e evita colisão visual entre título e logotipo.
+
+Implementação: adicionar `max-width:480pt` no h1 e no p de subtítulo em todos os slides com layout de coluna única (sem coluna de foto que já limite a largura naturalmente).
+
 **Regra de posição do logotipo (hierarquia obrigatória):**
 1. **Superior direito** — posição canônica. Usar sempre que o canto estiver livre de conteúdo ou imagem.
 2. **Inferior direito** — quando o superior direito está ocupado.
