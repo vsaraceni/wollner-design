@@ -92,6 +92,7 @@ Escala tipográfica em razão fixa. Para PPT com módulo 12pt:
 - Alinhamento: esquerdo por padrão, centralizado só em capas
 - Fonte: Arial ou Helvetica (web-safe, sem serifa, sem ambiguidade)
 - **Bullets são elementos tipográficos, não gráficos.** Usar `<ul>` + `::before` para o marcador (quadrado sólido 6pt na cor de acento). Nunca `<div>` posicionado ao lado do `<p>`. Detalhes em `references/wollner-ppt-tecnico.md`.
+- **Posição do logotipo: hierarquia de três opções.** (1) Canto superior direito — posição canônica, usar sempre que o canto estiver livre. (2) Canto inferior direito — quando o superior direito está ocupado por conteúdo ou imagem. (3) Canto inferior esquerdo — quando ambos os cantos direitos estão ocupados (ex: slides com foto ou vinhetas ocupando toda a coluna direita). O logo nunca sobrepõe foto, dado ou elemento de conteúdo.
 - **Cantos sutis, sempre uniformes.** `border-radius` de cards entre 4pt (mini-cards) e 6pt (cards de conteúdo). Nunca 8–12pt. Barras de acento inscritas dentro de cards têm raio em todos os 4 cantos (2pt uniforme) e offset tanto vertical quanto horizontal — nunca coladas na borda.
 
 ### 5. Paleta restrita

@@ -428,3 +428,4 @@ Antes de aceitar um slide como pronto, rodar mentalmente este checklist contra o
 - [ ] Todos os valores de espaço são múltiplos do módulo base?
 - [ ] Nenhum elemento invade a margem (48pt lateral, 36pt vertical)?
 - [ ] Logo do rodapé não está sendo comprimido por flex?
+- [ ] Posição do logo segue a regra de prioridade: (1) superior direito se livre; (2) inferior direito se superior ocupado; (3) inferior esquerdo se ambos ocupados. Logo nunca sobrepõe foto ou conteúdo.
