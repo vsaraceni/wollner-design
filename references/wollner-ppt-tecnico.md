@@ -355,7 +355,9 @@ Regras de proporção e aplicação não mudam: 60% fundo / 30% primária / 10% 
 6. **border-radius**: suporte pleno, mas preferir raios sutis (4–6pt) — ver seção "Barra inscrita dentro de card arredondado"
 7. **gradiente**: NÃO usar (não renderiza corretamente e viola o método Wollner)
 8. **fontes externas via Google Fonts**: o `<link>` não carrega no Puppeteer headless; declarar a família na cadeia `font-family` com fallback web-safe (`'Rubik', Arial, sans-serif`) e aceitar que a renderização final usa o fallback — ou embutir @font-face com base64 da fonte
-9. **viewport do Playwright no build.js DEVE casar com o tamanho em pt do HTML**. Se o `<body>` é `720×405pt`, o viewport precisa ser `960×540px` (pt × 96/72), não `720×405px`. Usar `deviceScaleFactor` para alta resolução, nunca multiplicar o viewport. Erro clássico: conteúdo aparece numa "ilha" de ~56% no canto superior-esquerdo do PPTX. O `screenshot.js` não tem esse bug porque já usa 960×540; o bug antigo estava no `build.template.js` (corrigido 2026-04)
+9. **`<br>` dentro de `<h1>`–`<h6>` gera gap enorme no PPTX, não quebra de linha suave.** O html2pptx converte `<br>` em parágrafo separado, e o PowerPoint aplica espaçamento de parágrafo antes e depois de cada um. Num título de 42pt isso vira ~50pt de vazio entre as linhas visuais. Solução: dois elementos irmãos com `margin:0`. `<br>` é seguro apenas em `<p>` com fonte ≤10pt.
+
+10. **viewport do Playwright no build.js DEVE casar com o tamanho em pt do HTML**. Se o `<body>` é `720×405pt`, o viewport precisa ser `960×540px` (pt × 96/72), não `720×405px`. Usar `deviceScaleFactor` para alta resolução, nunca multiplicar o viewport. Erro clássico: conteúdo aparece numa "ilha" de ~56% no canto superior-esquerdo do PPTX. O `screenshot.js` não tem esse bug porque já usa 960×540; o bug antigo estava no `build.template.js` (corrigido 2026-04)
 
 ## Workflow de revisão visual antes do build PPTX
 
