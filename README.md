@@ -1,32 +1,42 @@
 # Wollner Design
 
-Gera decks e documentos com rigor sistemático. Sistema antes de forma, módulo antes de estética, função antes de beleza.
+**Design que envelhece bem.** Decks e documentos com rigor sistemático — tipografia modular, paleta restrita, grid fixo. Saem certos da primeira vez porque obedecem regras, não apenas gosto.
 
-## O que faz
+## Por que Wollner?
 
-A skill estrutura o método em três fases:
+Porque design que dura **não é expressão pessoal**, é engenharia visual.
 
-- **Diagnóstico** — captura de marca, paleta e tipografia a partir de URL, arquivo de referência ou entrevista dirigida.
-- **Estruturação** — declaração explícita de módulo, grid, escala tipográfica e paleta restrita, com geração automática do pipeline HTML → PNG → PPTX.
-- **Auditoria** — validação em duas camadas (método e robustez de layout) antes da entrega final.
+Wollner foi discípulo direto de Max Bill na HfG Ulm (1955–1958), a escola funcionalista que herdou a filosofia Bauhaus. Voltou ao Brasil e criou identidades que **envelhecem** — Itaú, Hering, Eucatex, Klabin — não porque fossem "bonitas", mas porque eram **sistemáticas**. Cada elemento tinha razão de existir. Nada era decorativo.
 
-Saída: PPTX 16:9 (ou customizado) com até 100 slides, tipografia modular, paleta restrita (máx 3 cores), grid fixo, geometria elementar.
+A regra dele: **sistema antes de forma, módulo antes de estética, função antes de beleza.**
 
-## Quem faz
+60+ anos depois, as marcas que ele projetou ainda funcionam. As que focavam em tendência ou expressão pessoal desapareceram.
 
-Skill em homenagem a **Alexandre Wollner** (1928–2021), pai do design moderno brasileiro. Estudou na HfG Ulm (1955–1958), a escola alemã que sucedeu a Bauhaus, onde absorveu o rigor sistemático da tradição funcionalista. De volta ao Brasil, fundou o Forminform (1958), primeiro escritório de design do país, e depois a ESDI (1962), primeira escola superior de design da América Latina.
+## O que esta skill faz
 
-Ao longo de seis décadas, Wollner assinou identidades visuais duradouras — Itaú, Hering, Eucatex, Klabin, Coqueiro. Seu método era o mesmo em todas: **sistema antes de forma, módulo antes de estética, função antes de beleza**. Design, para ele, era projeto — disciplina de engenharia visual, não expressão pessoal.
+Automatiza esse método para que você **não precise ser discípulo de Wollner** para produzir apresentações com essa qualidade. Vem com:
 
-Criada por **Vinicius Saraceni**, ex-aluno de Wollner, como homenagem e perpetuação do método. Está aberta ao público para que qualquer pessoa possa projetar sistemas de comunicação com o rigor que ele ensinou.
+- **Diagnóstico** — extrai paleta, tipografia e tom a partir de URL, referência visual ou entrevista
+- **Sistema declarativo** — define módulo, grid e escala tipográfica uma vez; o resto segue automático
+- **Pipeline HTML → PNG → PPTX** — loop visual rápido (screenshots em 3 segundos) antes de gerar binário final
+- **Auditoria em duas camadas** — valida método (grid, módulo, proporções) + robustez (sem quebras de texto, raios consisten
 
-## Pilares do método
+tes, espacamentos harmônicos)
+- **Saída profissional** — PPTX 16:9 com até 100 slides, tipografia modular, paleta de 3 cores, geometria elementar
+
+**Resultado:** apresentações que parecem ter sido pensadas, não decoradas.
+
+## Quem criou isto
+
+**Vinicius Saraceni**, ex-aluno de Wollner. Como aluno, absorveu que design é projeto, não arte. Criou esta skill para manter o método vivo — porque o que Wollner ensinou não é moda que expira, é princípio.
+
+## Pilares (que você não vai violar)
 
 1. **Módulo como unidade mínima** — toda medida é múltiplo do módulo base (12pt ≡ 16px em pipelines html2pptx).
-2. **Grid modular fixo** — uma vez definido, nunca violado.
-3. **Geometria elementar** — apenas triângulo, quadrado e círculo como formas de suporte.
-4. **Tipografia derivada do módulo** — escala em razão fixa, no máximo 2 tamanhos por slide.
-5. **Paleta restrita** — no máximo 3 cores com proporção definida (60/30/10).
+2. **Grid modular fixo** — uma vez definido, nunca violado. Coerência > flexibilidade.
+3. **Geometria elementar** — apenas triângulo, quadrado e círculo como formas de suporte. Sem clip art.
+4. **Tipografia derivada do módulo** — escala em razão fixa, máximo 2 tamanhos por slide. Hierarquia clara, sem ruído.
+5. **Paleta restrita** — máximo 3 cores com proporção definida (60% fundo / 30% primária / 10% acento). Menos é mais.
 
 ## Como usar
 
