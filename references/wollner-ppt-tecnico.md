@@ -22,6 +22,25 @@ Valores canônicos de largura para divisões de colunas de layout:
 
 **Regra de largura do bloco título/subtítulo:**
 
+**Regra de clearance do logo (zona de exclusão):**
+
+O logo posicionado em `tr` (top-right) ocupa um retângulo absoluto no slide: `x = 720−36−72 = 612pt` até `684pt`, `y = 36pt` até `67pt`. Nenhum conteúdo pode entrar nessa zona.
+
+Para slides full-width: `max-width: 480pt` no h1 (2/3 de 720pt) é suficiente pois 480 < 612.
+
+Para slides com colunas parciais (coluna de texto + coluna de imagem), calcular:
+
+```
+max-width_h1 = x_logo_no_slide − x_início_coluna − padding_lateral_esquerdo
+             = 612 − col_start − padding_left
+```
+
+Exemplo slide 15: col_start=324pt, padding_left=36pt → max-width = 612−324−36 = **252pt**
+
+O padding-right da coluna de conteúdo também deve ser ≥ 36pt (margem Wollner) para que os cards e elementos de conteúdo não ultrapassem a borda do conteúdo útil.
+
+
+
 O h1 (título) e o p de subtítulo imediatamente abaixo nunca devem ultrapassar **2/3 da largura total do slide** (480pt de 720pt). Essa regra garante espaço livre no canto onde o logo é posicionado e evita colisão visual entre título e logotipo.
 
 Implementação: adicionar `max-width:480pt` no h1 e no p de subtítulo em todos os slides com layout de coluna única (sem coluna de foto que já limite a largura naturalmente).

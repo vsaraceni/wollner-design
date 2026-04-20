@@ -232,6 +232,7 @@ Ver `scripts/README.md` para comandos exatos e `scripts/requirements.md` para in
 - [ ] Toda width fixa de coluna de layout é múltiplo de 12pt e derivada do grid (192 / 300 / 312 / 336 / 360 / 408 / 432pt)
 - [ ] Posição do logo segue a hierarquia: (1) superior direito → (2) inferior direito → (3) inferior esquerdo
 - [ ] Bloco título+subtítulo tem max-width:480pt (2/3 de 720pt) em slides com logo superior direito
+- [ ] Em colunas parciais (não full-width), o h1 tem max-width calculado para não entrar na zona do logo: x_logo_no_slide − x_início_coluna − padding_lateral
 - [ ] Unidade coerente por arquivo — não misturar px e pt no mesmo gerador
 - [ ] Grid não foi violado (elementos dentro das margens)
 - [ ] Máximo 3 tamanhos de fonte no slide (**exceção documental:** meta-slides que *declaram* a escala)
@@ -300,6 +301,7 @@ Detalhes, CSS de referência e gotchas em `references/wollner-ppt-tecnico.md`.
 | Divisão de coluna com valor não-modular | Ex: 368pt, 436pt, 310pt. Toda width fixa de coluna de layout deve ser múltiplo de 12pt (ou submódulo 3pt). Derivar sempre do grid: 192pt (1 col), 300pt (2 col), 408pt (2+calha), 432pt (3+calhas de 24pt). |
 | Logo em posição arbitrária | Usar hierarquia obrigatória: (1) superior direito se livre; (2) inferior direito se superior ocupado; (3) inferior esquerdo se ambos os cantos direitos ocupados por foto ou conteúdo. Nunca sobrepor imagem. |
 | Título/subtítulo ultrapassando 2/3 da largura | O bloco h1 + p de subtítulo de cada slide nunca deve exceder 2/3 da largura total (480pt de 720pt). Deixa espaço livre para o logo no canto superior direito e evita colisão. Aplicar `max-width:480pt` nesses elementos. |
+| Conteúdo entrando na zona de clearance do logo | Quando o logo está no canto superior direito (tr), ele ocupa um retângulo absoluto de 72pt×31pt a 36pt da borda. Todo conteúdo (h1, cards, textos) na mesma região deve ter max-width calculado para não entrar nessa zona. Fórmula: calcular a posição x do logo no slide (720−36−72=612pt), subtrair a origem da coluna de conteúdo e o padding lateral para obter o max-width seguro do h1. |
 | Bullet como `<div>` gráfico     | Bullet é parte do texto, não elemento dissociado |
 | `border-radius` 8–12pt em cards | Fica infantil; preferir 4–6pt sutil      |
 | Barra inscrita com `border-radius` assimétrico (valor 0 em algum canto) | A barra tem raio próprio; raio parcial parece bug de renderização |
