@@ -1,22 +1,24 @@
 # Wollner Design
 
-> Skill em homenagem a **Alexandre Wollner** (1928–2021), pai do design moderno brasileiro.
+Gera decks e documentos com rigor sistemático. Sistema antes de forma, módulo antes de estética, função antes de beleza.
 
-## Sobre Alexandre Wollner
-
-Alexandre Wollner é o pai do design moderno brasileiro. Estudou na HfG Ulm (1955–1958), a escola alemã que sucedeu a Bauhaus, onde absorveu o rigor sistemático da tradição funcionalista. De volta ao Brasil, fundou o Forminform (1958), primeiro escritório de design do país, e depois a ESDI (1962), primeira escola superior de design da América Latina.
-
-Ao longo de seis décadas, Wollner assinou algumas das identidades visuais mais duradouras do Brasil: Itaú, Hering, Eucatex, Klabin e Coqueiro, entre outras. Seu método era o mesmo em todas: **sistema antes de forma, módulo antes de estética, função antes de beleza**. Design, para ele, era projeto — uma disciplina de engenharia visual, não de expressão pessoal.
-
-## Sobre esta skill
-
-Esta skill foi criada por **Vinicius Saraceni**, ex-aluno de Wollner, como homenagem e perpetuação do método. Está aberta ao público para que qualquer pessoa possa projetar sistemas de comunicação com o rigor que ele ensinou.
+## O que faz
 
 A skill estrutura o método em três fases:
 
 - **Diagnóstico** — captura de marca, paleta e tipografia a partir de URL, arquivo de referência ou entrevista dirigida.
 - **Estruturação** — declaração explícita de módulo, grid, escala tipográfica e paleta restrita, com geração automática do pipeline HTML → PNG → PPTX.
 - **Auditoria** — validação em duas camadas (método e robustez de layout) antes da entrega final.
+
+Saída: PPTX 16:9 (ou customizado) com até 100 slides, tipografia modular, paleta restrita (máx 3 cores), grid fixo, geometria elementar.
+
+## Quem faz
+
+Skill em homenagem a **Alexandre Wollner** (1928–2021), pai do design moderno brasileiro. Estudou na HfG Ulm (1955–1958), a escola alemã que sucedeu a Bauhaus, onde absorveu o rigor sistemático da tradição funcionalista. De volta ao Brasil, fundou o Forminform (1958), primeiro escritório de design do país, e depois a ESDI (1962), primeira escola superior de design da América Latina.
+
+Ao longo de seis décadas, Wollner assinou identidades visuais duradouras — Itaú, Hering, Eucatex, Klabin, Coqueiro. Seu método era o mesmo em todas: **sistema antes de forma, módulo antes de estética, função antes de beleza**. Design, para ele, era projeto — disciplina de engenharia visual, não expressão pessoal.
+
+Criada por **Vinicius Saraceni**, ex-aluno de Wollner, como homenagem e perpetuação do método. Está aberta ao público para que qualquer pessoa possa projetar sistemas de comunicação com o rigor que ele ensinou.
 
 ## Pilares do método
 
