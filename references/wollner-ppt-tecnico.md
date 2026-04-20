@@ -4,6 +4,31 @@
 
 ### Deck padrão 720x405pt (16:9)
 
+**Regra de negócio: toda divisão de coluna DEVE ser múltiplo de 12pt e derivada do grid.**
+
+Valores canônicos de largura para divisões de colunas de layout:
+
+| Divisão | Largura coluna | Derivação |
+|---|---|---|
+| 1 de 3 colunas | 192pt | (624 − 2×24) / 3 |
+| 2 de 3 colunas + calha | 408pt | 2×192 + 24 |
+| 2 de 3 colunas + 2 calhas | 432pt | 2×192 + 2×24 |
+| 1 de 2 colunas | 300pt | (624 − 24) / 2 |
+| 1 de 2 colunas sangrada | 336pt | 300 + margem 36pt |
+| Coluna texto estreita (2 cols úteis) | 360pt | 3×12×10 = 300 + 60 |
+| Coluna foto sangrada até borda | restante | 720 − coluna texto |
+
+**Nunca usar valores arbitrários** como 368pt, 436pt, 310pt, 330pt, 320pt. Se um valor não for derivável da tabela acima, revisar o layout.
+
+**Regra de posição do logotipo (hierarquia obrigatória):**
+1. **Superior direito** — posição canônica. Usar sempre que o canto estiver livre de conteúdo ou imagem.
+2. **Inferior direito** — quando o superior direito está ocupado.
+3. **Inferior esquerdo** — quando ambos os cantos direitos estão ocupados (ex: slides com foto ou vinhetas cobrindo toda a coluna direita).
+
+O logo nunca sobrepõe foto, dado ou elemento de conteúdo. Em slides com coluna direita inteira ocupada por imagem, ir para inferior esquerdo.
+
+### Deck padrão 720x405pt (16:9)
+
 | Parâmetro          | pt     | px     | Derivação          |
 |--------------------|--------|--------|--------------------|
 | Módulo base        | 12pt   | 16px   | definição inicial  |
