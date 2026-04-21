@@ -19,12 +19,25 @@ Automatiza esse método para que você **não precise ser discípulo de Wollner*
 - **Diagnóstico** — extrai paleta, tipografia e tom a partir de URL, referência visual ou entrevista
 - **Sistema declarativo** — define módulo, grid e escala tipográfica uma vez; o resto segue automático
 - **Pipeline HTML → PNG → PPTX** — loop visual rápido (screenshots em 3 segundos) antes de gerar binário final
-- **Auditoria em duas camadas** — valida método (grid, módulo, proporções) + robustez (sem quebras de texto, raios consisten
-
-tes, espacamentos harmônicos)
+- **Auditoria em duas camadas** — valida método (grid, módulo, proporções) + robustez (sem quebras de texto, raios consistentes, espaçamentos harmônicos)
 - **Saída profissional** — PPTX 16:9 com até 100 slides, tipografia modular, paleta de 3 cores, geometria elementar
 
 **Resultado:** apresentações que parecem ter sido pensadas, não decoradas.
+
+## 40 regras de negócio como garantia de qualidade
+
+Esta skill não é um conjunto de sugestões — é um sistema de regras derivadas de produção real. Toda peça gerada é validada contra **40 regras antes do output**:
+
+**12 regras de método (Camada A)**
+Grid modular obrigatório, escala tipográfica em razão fixa, paleta de 3 cores com proporção definida, hierarquia de posição do logo (tr → br → bl), clearance calculado para evitar colisão com o logotipo, unidade coerente por arquivo (px ou pt, nunca os dois).
+
+**10 regras de robustez (Camada B)**
+Auditoria de proporção de imagens com fórmulas de crop via sharp, coerência de `border-radius` entre container e filhos, rótulos atômicos com `white-space:nowrap`, bullets tipográficos via `<ul>::before`, proibição de `<br>` em h1-h6 (gera gap no PPTX), caracteres Unicode substituídos por entidades HTML, `linear-gradient` substituído por overlay rgba.
+
+**18 proibições explícitas**
+Cada uma com justificativa técnica: degradê, sombra, clip art, `border-radius` assimétrico em barras inscritas, colunas com largura não-modular, imagem portrait em célula landscape sem crop, e mais.
+
+Regras novas são adicionadas a cada projeto — o número cresce, nunca diminui.
 
 ## Quem criou isto
 
