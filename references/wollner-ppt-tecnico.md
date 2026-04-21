@@ -22,6 +22,37 @@ Valores canônicos de largura para divisões de colunas de layout:
 
 **Regra de largura do bloco título/subtítulo:**
 
+O h1 e o p de subtítulo imediatamente abaixo nunca devem ultrapassar **2/3 da largura total do slide** (480pt de 720pt). Essa regra garante espaço livre no canto do logo e evita colisão visual.
+
+Implementação: `max-width:480pt` em h1 e subtítulo em slides com layout de coluna única. Em slides com colunas parciais (coluna de texto + coluna de imagem), o h1 já está naturalmente limitado pela largura da coluna — mas verificar que não invade a zona do logo quando o logo é `tr`.
+
+**Regra de clearance do logo (zona de exclusão):**
+
+O logo posicionado em `tr` (top-right) ocupa: `x = 720−36−72 = 612pt` até `684pt`, `y = 36pt` até `67pt`. Nenhum conteúdo pode entrar nessa zona.
+
+Para slides full-width: `max-width: 480pt` no h1 é suficiente pois 480 < 612.
+
+Para slides com colunas parciais, calcular:
+
+```
+max-width_h1 = x_logo_no_slide − x_início_coluna − padding_lateral_esquerdo
+             = 612 − col_start − padding_left
+```
+
+Exemplos:
+- Slide com coluna texto começando em x=36pt, padding 36pt: max-width = 612−36−36 = **540pt** (cobertura full da coluna, mas verificar se tem logo tr)
+- Slide com coluna direita começando em x=324pt, padding 36pt: max-width = 612−324−36 = **252pt**
+- Slide com coluna direita começando em x=360pt, padding 36pt: max-width = 612−360−36 = **216pt**
+
+O padding-right da coluna de conteúdo também deve ser ≥ M (margem Wollner) para que cards não ultrapassem a borda útil.
+
+**Regra de posição do logotipo (hierarquia obrigatória):**
+1. **Superior direito** — posição canônica. Usar sempre que o canto estiver livre de conteúdo ou imagem.
+2. **Inferior direito** — quando o superior direito está ocupado por conteúdo ou foto.
+3. **Inferior esquerdo** — quando ambos os cantos direitos estão ocupados (ex: slides com foto ou vinhetas cobrindo toda a coluna direita).
+
+O logo nunca sobrepõe foto, dado ou elemento de conteúdo.
+
 **Auditoria de proporção de imagens:**
 
 Antes de renderizar o deck, verificar se a proporção (ratio = width/height) da célula HTML onde cada imagem será exibida é compatível com a proporção do arquivo de origem. Incompatibilidades causam esticamento mesmo com `object-fit:cover`.
@@ -29,27 +60,66 @@ Antes de renderizar o deck, verificar se a proporção (ratio = width/height) da
 **Snippet de auditoria a rodar no início de todo build.js:**
 
 ```javascript
-const sharp = require('sharp'); // npm -g sharp
+const sharp = require('C:/Users/vinnie/node_modules/sharp');
 async function auditarImagens(imagens) {
   // imagens = [{ src, cellW, cellH, label }]
+  const THRESHOLD = 0.20;
+  let temFlag = false;
   for (const { src, cellW, cellH, label } of imagens) {
     const meta = await sharp(src).metadata();
-    const ratioImg  = meta.width / meta.height;
-    const ratioCel  = cellW / cellH;
-    const desvio    = Math.abs(ratioImg - ratioCel) / ratioCel;
-    const status    = desvio > 0.20 ? '⚠ CROP NECESSÁRIO' : '✓ OK';
-    console.log(`[${status}] ${label}: img ${ratioImg.toFixed(2)} vs célula ${ratioCel.toFixed(2)} (desvio ${(desvio*100).toFixed(0)}%)`);
+    const ratioImg = meta.width / meta.height;
+    const ratioCel = cellW / cellH;
+    const desvio   = Math.abs(ratioImg - ratioCel) / ratioCel;
+    const status   = desvio > THRESHOLD ? '⚠  CROP NECESSÁRIO' : '✓  OK';
+    if (desvio > THRESHOLD) temFlag = true;
+    console.log(`  [${status}] ${label}: img ${ratioImg.toFixed(2)} vs célula ${ratioCel.toFixed(2)} (desvio ${(desvio*100).toFixed(0)}%)`);
   }
+  if (temFlag) console.log('\n  ⚠  Atenção: corrija as imagens acima antes de distribuir o deck.\n');
+  else         console.log('\n  ✓  Todas as proporções OK.\n');
 }
 ```
 
 **Regras de correção:**
 - Desvio ≤ 20% → aceitar com `object-fit:cover`
-- Desvio > 20% e imagem portrait em célula landscape → fazer crop com sharp antes do build
-- Desvio > 20% e imagem landscape em célula portrait → ajustar largura da célula ou fazer crop
-- Crop canônico com sharp: `sharp(src).extract({ left, top, width, height }).toFile(out)`
-- Para portrait 3:4: `height = original_h; width = height * 0.75; left = (original_w - width) / 2`
-- Para landscape 4:3: `width = original_w; height = width * 0.75; top = (original_h - height) / 2`
+- Desvio > 20% → fazer crop com sharp antes do build; nunca confiar que o browser vai corrigir
+
+**Fórmulas de crop canônico com sharp:**
+
+```javascript
+// Para qualquer proporção alvo (targetRatio = targetW / targetH):
+// Se a imagem original for mais larga que o alvo → crop horizontal (reduzir largura)
+// Se a imagem original for mais alta que o alvo  → crop vertical (reduzir altura)
+
+const m = await sharp(src).metadata();
+const origRatio = m.width / m.height;
+
+if (origRatio > targetRatio) {
+  // imagem mais larga → fixar altura, cortar laterais
+  const cropW = Math.round(m.height * targetRatio);
+  const cropH = m.height;
+  const left  = Math.round((m.width - cropW) / 2);
+  await sharp(src).extract({ left, top: 0, width: cropW, height: cropH }).toFile(out);
+} else {
+  // imagem mais alta → fixar largura, cortar topo/baixo
+  const cropW = m.width;
+  const cropH = Math.round(m.width / targetRatio);
+  const top   = Math.round((m.height - cropH) / 2);  // centrar; ou offset % p/ rosto
+  await sharp(src).extract({ left: 0, top, width: cropW, height: cropH }).toFile(out);
+}
+```
+
+Exemplos de `targetRatio` por tipo de célula:
+| Célula | Ratio | Exemplo |
+|---|---|---|
+| Portrait 3:4 (foto vertical) | 0.75 | Foto de pessoa, 276×368pt |
+| Portrait extremo (0.42:1) | 0.42 | Strip lateral estreita, 140×333pt |
+| Quadrado | 1.0 | Vinheta 165×165pt |
+| Landscape 4:3 | 1.33 | Card horizontal |
+| Landscape wide (1.26:1) | 1.26 | Persona 208×165pt |
+| Panorâmico 3:1 | 3.0 | Strip hero 720×240pt |
+| Portrait sangrado (0.83:1) | 0.83 | Coluna lateral 336×405pt |
+
+Para fotos de pessoas: usar `top` com offset de 10–15% em vez de centro exato, para preservar o rosto que fica no terço superior.
 
 **Gotcha:** células com `flex:1` e `height:100%` sem `position:relative` não respeitam o `object-fit`. Estrutura obrigatória para célula de imagem flex:
 ```html
@@ -58,45 +128,17 @@ async function auditarImagens(imagens) {
 </div>
 ```
 
-**Regra de clearance do logo (zona de exclusão):**
-
-O logo posicionado em `tr` (top-right) ocupa um retângulo absoluto no slide: `x = 720−36−72 = 612pt` até `684pt`, `y = 36pt` até `67pt`. Nenhum conteúdo pode entrar nessa zona.
-
-Para slides full-width: `max-width: 480pt` no h1 (2/3 de 720pt) é suficiente pois 480 < 612.
-
-Para slides com colunas parciais (coluna de texto + coluna de imagem), calcular:
-
-```
-max-width_h1 = x_logo_no_slide − x_início_coluna − padding_lateral_esquerdo
-             = 612 − col_start − padding_left
-```
-
-Exemplo slide 15: col_start=324pt, padding_left=36pt → max-width = 612−324−36 = **252pt**
-
-O padding-right da coluna de conteúdo também deve ser ≥ 36pt (margem Wollner) para que os cards e elementos de conteúdo não ultrapassem a borda do conteúdo útil.
-
-
-
-O h1 (título) e o p de subtítulo imediatamente abaixo nunca devem ultrapassar **2/3 da largura total do slide** (480pt de 720pt). Essa regra garante espaço livre no canto onde o logo é posicionado e evita colisão visual entre título e logotipo.
-
-Implementação: adicionar `max-width:480pt` no h1 e no p de subtítulo em todos os slides com layout de coluna única (sem coluna de foto que já limite a largura naturalmente).
-
-**Regra de posição do logotipo (hierarquia obrigatória):**
-1. **Superior direito** — posição canônica. Usar sempre que o canto estiver livre de conteúdo ou imagem.
-2. **Inferior direito** — quando o superior direito está ocupado.
-3. **Inferior esquerdo** — quando ambos os cantos direitos estão ocupados (ex: slides com foto ou vinhetas cobrindo toda a coluna direita).
-
-O logo nunca sobrepõe foto, dado ou elemento de conteúdo. Em slides com coluna direita inteira ocupada por imagem, ir para inferior esquerdo.
-
-### Deck padrão 720x405pt (16:9)
+### Tabela de parâmetros de módulo — 720x405pt
 
 | Parâmetro          | pt     | px     | Derivação          |
 |--------------------|--------|--------|--------------------|
 | Módulo base        | 12pt   | 16px   | definição inicial  |
-| Margem lateral     | 48pt   | 64px   | 4× módulo          |
+| Margem lateral     | 48pt   | 64px   | 4× módulo (formal) |
+| Margem lateral M   | 36pt   | 48px   | 3× módulo (compacto) |
 | Margem vertical    | 36pt   | 48px   | 3× módulo          |
 | Calha de coluna    | 24pt   | 32px   | 2× módulo          |
-| Largura útil       | 624pt  | 832px  | 720 − 2×48         |
+| Largura útil (48pt)| 624pt  | 832px  | 720 − 2×48         |
+| Largura útil (36pt)| 648pt  | 864px  | 720 − 2×36         |
 | Col. 2 colunas     | 300pt  | 400px  | (624 − 24) / 2     |
 | Col. 3 colunas     | 192pt  | 256px  | (624 − 2×24) / 3   |
 | Line-height corpo  | 1.5    | 1.5    | padrão legibilidade|
