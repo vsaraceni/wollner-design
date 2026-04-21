@@ -341,6 +341,17 @@ Solução: substituir gradientes por **overlays sólidos com rgba**:
 ```
 Se precisar de transição visual, usar dois divs sobrepostos com larguras diferentes e opacidades distintas.
 
+**Gotcha 4 — JPEG não carrega no Playwright no Windows:**
+O Playwright (Chromium headless no Windows) falha silenciosamente ao carregar arquivos `.jpg`/`.jpeg` via path local (`C:/tmp/...`). A imagem simplesmente não aparece no slide — sem erro no console, sem warning. PNGs carregam normalmente.
+
+Solução: **sempre converter assets de imagem para PNG antes do build**:
+```javascript
+// No pipeline de prep de imagens (sharp):
+await sharp('foto.jpg').png().toFile('foto.png');
+// Nunca referenciar .jpg diretamente no HTML do slide
+```
+Regra prática: se uma imagem não aparece no slide mas o path está correto, o primeiro diagnóstico é converter para PNG.
+
 ### Robustez de layout: rótulos atômicos e flex-wrap
 
 Caixas de texto em grids apertados quebram linhas em lugares errados ("78" + "%" separados, "Sistema garante" em duas linhas, "48pt lateral, 36pt" + "vertical" em linha separada). Três princípios para robustez:
