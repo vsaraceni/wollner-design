@@ -224,6 +224,46 @@ Variantes:
 - `<div>` com `width:6px; height:6px` ao lado do `<p>` como bullet. Quebra em quebra de linha, exige `flex align-items:flex-start` e `margin-top:6px` arbitrário, e vira elemento gráfico dissociado do texto.
 - Caracteres Unicode tipo `•` ou `■` no texto. Dependem da fonte disponível no PPTX, variam de tamanho, não dão controle de cor independente.
 
+### Gotchas críticos do pipeline html2pptx
+
+**Gotcha 1 — `<br>` dentro de h1-h6 gera gap de parágrafo no PPTX:**
+O Playwright renderiza o `<br>` como quebra de linha visual, mas o html2pptx converte cada linha em um parágrafo PowerPoint separado com espaçamento padrão (~1× font-size). O resultado é um gap enorme entre as linhas do título.
+
+Solução: **nunca usar `<br>` dentro de h1-h6**. Substituir por dois elementos irmãos:
+```html
+<!-- Errado -->
+<h1>Primeira linha<br>Segunda linha</h1>
+
+<!-- Correto -->
+<h1 style="margin:0;line-height:1.1;">Primeira linha</h1>
+<h1 style="margin:0 0 16pt 0;line-height:1.1;">Segunda linha</h1>
+```
+
+**Gotcha 2 — Caracteres Unicode especiais renderizam como lixo no PPTX:**
+Caracteres como `·` (ponto médio U+00B7), `—` (em dash U+2014), `→` (seta) e similares podem aparecer como caixas, interrogações ou caracteres incorretos dependendo da fonte embarcada no PPTX.
+
+Solução: usar **entidades HTML** no lugar de caracteres Unicode diretos:
+| Caractere | Unicode direto | Entidade HTML segura |
+|---|---|---|
+| Ponto médio | `·` | `&middot;` |
+| Travessão | `—` | `&mdash;` |
+| Hífen longo | `–` | `&ndash;` |
+| Seta direita | `→` | `&rarr;` |
+| Multiplicação | `×` | `&times;` |
+
+**Gotcha 3 — `linear-gradient` em div não é suportado pelo html2pptx:**
+O Puppeteer renderiza o gradiente corretamente no HTML, mas o html2pptx não consegue converter `background:linear-gradient()` em formato PPTX nativo — o build falha com erro "Background images on DIV elements are not supported".
+
+Solução: substituir gradientes por **overlays sólidos com rgba**:
+```html
+<!-- Errado -->
+<div style="background:linear-gradient(to right, rgba(0,0,0,0.8), transparent);">
+
+<!-- Correto: overlay sólido semi-transparente sobre a imagem -->
+<div style="background:rgba(67,34,114,0.88);">
+```
+Se precisar de transição visual, usar dois divs sobrepostos com larguras diferentes e opacidades distintas.
+
 ### Robustez de layout: rótulos atômicos e flex-wrap
 
 Caixas de texto em grids apertados quebram linhas em lugares errados ("78" + "%" separados, "Sistema garante" em duas linhas, "48pt lateral, 36pt" + "vertical" em linha separada). Três princípios para robustez:

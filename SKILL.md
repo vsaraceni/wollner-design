@@ -57,11 +57,13 @@ O grid não é uma grelha decorativa - é a **gramática** do slide. Uma vez def
 
 **Grid padrão Wollner para 720x405pt:**
 ```
-Margem lateral:    48pt
+Margem lateral:    48pt  (formal) ou 36pt (compacto — para slides com muito conteúdo)
 Margem vertical:   36pt
-Colunas:           2 (largura útil 624pt = 2x 300pt + 24pt calha)
+Colunas:           2 (largura útil 624pt com 48pt / 648pt com 36pt)
 Linhas de base:    múltiplos de 12pt
 ```
+
+> Variante compacta (M=36pt): usar quando o conteúdo é denso e precisa de mais área útil. Declarar no cabeçalho do gerador qual margem lateral está sendo usada e manter consistente em todos os slides.
 
 **Variante de 3 colunas** (para conteúdo denso):
 ```
@@ -249,6 +251,9 @@ Ver `scripts/README.md` para comandos exatos e `scripts/requirements.md` para in
 - [ ] Barras inscritas têm `border-radius:2pt` nos 4 cantos e offset nos dois eixos
 - [ ] Logo no rodapé não está sendo comprimido por flex (`flex-shrink:0`)
 - [ ] Todas as imagens passaram pela auditoria de proporção: ratio da célula no slide vs. ratio do arquivo original. Diferença > 20% = flag. Corrigir com crop (sharp) ou ajustar dimensões da célula.
+- [ ] Nenhum `<br>` dentro de h1-h6 (gera gap de parágrafo no PPTX — substituir por dois elementos irmãos com margin:0)
+- [ ] Nenhum caractere Unicode especial em texto renderizado (· — → usar entidades HTML: `&middot;` `&mdash;` `&rarr;`)
+- [ ] Nenhum `linear-gradient` em div (html2pptx não suporta — usar div sólido com rgba ou sobreposição de blocos)
 
 Detalhes, CSS de referência e gotchas em `references/wollner-ppt-tecnico.md`.
 
@@ -259,7 +264,7 @@ Detalhes, CSS de referência e gotchas em `references/wollner-ppt-tecnico.md`.
 ### Capa
 - Fundo: cor primária ou cor de acento (bloco sólido)
 - Título: Display 48pt, branco, alinhado à esquerda, no terço inferior
-- Logotipo: canto superior esquerdo ou inferior direito, nunca centralizado
+- Logotipo: seguir hierarquia canônica — (1) superior direito se livre, (2) inferior direito se ocupado, (3) inferior esquerdo se ambos os cantos direitos ocupados. Nunca centralizado.
 
 ### Slide de tese (1 ideia)
 - Título: 32pt, topo esquerdo
