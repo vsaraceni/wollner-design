@@ -83,6 +83,41 @@ async function auditarImagens(imagens) {
 - Desvio ≤ 20% → aceitar com `object-fit:cover`
 - Desvio > 20% → fazer crop com sharp antes do build; nunca confiar que o browser vai corrigir
 
+**Protocolo de leitura antes do crop — anchor + zoom:**
+
+Antes de definir qualquer crop, responder: *qual é o elemento estratégico da foto?* (rosto, tela de dispositivo, produto, ação principal). Esse elemento define o ponto de ancoragem e o zoom necessário para centralizá-lo na célula.
+
+Parâmetros declarados por imagem:
+- `anchorX, anchorY` — posição do elemento estratégico como fração (0–1) da imagem original
+- `zoom` — fator de aproximação: 1.0 = sem zoom, 1.4 = janela 29% menor (aproxima 40%), 2.0 = janela 50% menor
+
+```javascript
+async function cropAnchor(src, out, anchorX, anchorY, zoom, targetW, targetH) {
+  const m = await sharp(src).metadata();
+  const janW = Math.round(m.width  / zoom);
+  const janH = Math.round(m.height / zoom);
+  let left = Math.round(anchorX * m.width  - janW / 2);
+  let top  = Math.round(anchorY * m.height - janH / 2);
+  left = Math.max(0, Math.min(left, m.width  - janW));
+  top  = Math.max(0, Math.min(top,  m.height - janH));
+  await sharp(src)
+    .extract({ left, top, width: janW, height: janH })
+    .resize(targetW, targetH)
+    .toFile(out);
+}
+```
+
+Exemplos de anchor por tipo de foto:
+| Tipo de foto | anchorX | anchorY | zoom típico |
+|---|---|---|---|
+| Celular em mão (inferior-esquerdo) | 0.35–0.40 | 0.60–0.65 | 1.3–1.5 |
+| Laptop em mesa (centro) | 0.45–0.50 | 0.45–0.55 | 1.1–1.2 |
+| Rosto (portrait, terço superior) | 0.50 | 0.20–0.30 | 1.0–1.2 |
+| Grupo de pessoas (sala de aula) | 0.50 | 0.45–0.55 | 1.0 |
+| Dashboard/tela (central) | 0.50 | 0.50 | 1.0–1.3 |
+
+**Regra:** nunca usar `object-position:center top` como default sem ler a foto primeiro. `center top` corta a base — onde estão mãos, celulares, produtos. Declarar anchor e zoom explicitamente no comentário do código para cada imagem.
+
 **Fórmulas de crop canônico com sharp:**
 
 ```javascript

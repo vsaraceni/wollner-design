@@ -254,6 +254,7 @@ Ver `scripts/README.md` para comandos exatos e `scripts/requirements.md` para in
 - [ ] Barras inscritas têm `border-radius:2pt` nos 4 cantos e offset nos dois eixos
 - [ ] Logo no rodapé não está sendo comprimido por flex (`flex-shrink:0`)
 - [ ] Todas as imagens passaram pela auditoria de proporção: ratio da célula no slide vs. ratio do arquivo original. Diferença > 20% = flag. Corrigir com crop (sharp) ou ajustar dimensões da célula.
+- [ ] Cada imagem tem anchor (x%, y%) e zoom declarados: identificar o elemento estratégico da foto (tela, rosto, produto) e usar `cropAnchor()` para centralizá-lo. Nunca usar `object-position:center top` sem ler a foto primeiro.
 - [ ] Nenhum `<br>` dentro de h1-h6 (gera gap de parágrafo no PPTX — substituir por dois elementos irmãos com margin:0)
 - [ ] Nenhum caractere Unicode especial em texto renderizado (· — → usar entidades HTML: `&middot;` `&mdash;` `&rarr;`)
 - [ ] Nenhum `linear-gradient` em div (html2pptx não suporta — usar div sólido com rgba ou sobreposição de blocos)
