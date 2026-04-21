@@ -1,7 +1,7 @@
 ---
 name: wollner-design
 description: |-
-  This skill should be used when the user asks to "design no estilo Wollner", "aplicar método Wollner", "criar slide com grid modular", "layout sistemático", "programação visual", "design funcionalista", "grid Ulm", or asks for slides/presentations with systematic, mathematical, or modular design discipline. Also trigger when user says "sem decoração", "só o essencial", "design com rigor", or references Bauhaus/Swiss/Ulm aesthetics.
+  This skill should be used when the user asks to "design no estilo Wollner", "aplicar método Wollner", "criar slide com grid modular", "layout sistemático", "programação visual", "design funcionalista", "grid Ulm", or asks for slides/presentations with systematic, mathematical, or modular design discipline. Also trigger when user says "sem decoração", "só o essencial", "design com rigor", or references Bauhaus/Swiss/Ulm aesthetics. This skill enforces 40 business rules across method (grid, typography, color, logo positioning, title clearance) and robustness (image proportion audit, border-radius coherence, html2pptx pipeline gotchas) that govern every new piece produced.
 version: 0.1.0
 ---
 
