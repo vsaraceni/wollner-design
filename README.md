@@ -1,83 +1,83 @@
 # Wollner Design
 
-**Design que envelhece bem.** Decks e documentos com rigor sistemático — tipografia modular, paleta restrita, grid fixo. Saem certos da primeira vez porque obedecem regras, não apenas gosto.
+**Produce professional slides right the first time.** Systematic decks built on modular typography, a restricted palette, and a fixed grid — correct by construction, not by luck.
 
-## Por que Wollner?
+## Why Wollner?
 
-Porque design que dura **não é expressão pessoal**, é engenharia visual.
+Because design that lasts is **not personal expression** — it's visual engineering.
 
-Wollner foi discípulo direto de Max Bill na HfG Ulm (1955–1958), a escola funcionalista que herdou a filosofia Bauhaus. Voltou ao Brasil e criou identidades que **envelhecem** — Itaú, Hering, Eucatex, Klabin — não porque fossem "bonitas", mas porque eram **sistemáticas**. Cada elemento tinha razão de existir. Nada era decorativo.
+Alexandre Wollner (1928–2021) studied under Max Bill at HfG Ulm (1955–1958), the functionalist school that inherited Bauhaus philosophy. He returned to Brazil and built identities that **age well** — Itaú, Hering, Eucatex, Klabin — not because they were pretty, but because they were **systematic**. Every element had a reason to exist. Nothing was decorative.
 
-A regra dele: **sistema antes de forma, módulo antes de estética, função antes de beleza.**
+His rule: **system before form, module before aesthetics, function before beauty.**
 
-60+ anos depois, as marcas que ele projetou ainda funcionam. As que focavam em tendência ou expressão pessoal desapareceram.
+60+ years later, the brands he designed still work. The ones chasing trends or personal expression are gone.
 
-## O que esta skill faz
+## What this skill does
 
-Automatiza esse método para que você **não precise ser discípulo de Wollner** para produzir apresentações com essa qualidade. Vem com:
+It encodes that method so you **don't need to be Wollner's student** to produce work at that standard. Includes:
 
-- **Diagnóstico** — extrai paleta, tipografia e tom a partir de URL, referência visual ou entrevista
-- **Sistema declarativo** — define módulo, grid e escala tipográfica uma vez; o resto segue automático
-- **Pipeline HTML → PNG → PPTX** — loop visual rápido (screenshots em 3 segundos) antes de gerar binário final
-- **Auditoria em duas camadas** — valida método (grid, módulo, proporções) + robustez (sem quebras de texto, raios consistentes, espaçamentos harmônicos)
-- **Saída profissional** — PPTX 16:9 com até 100 slides, tipografia modular, paleta de 3 cores, geometria elementar
+- **Brand diagnosis** — extracts palette, typography and tone from a URL, visual reference, or interview
+- **Declarative system** — declare module, grid and type scale once; everything else follows automatically
+- **HTML → PNG → PPTX pipeline** — fast visual loop (screenshots in 3 seconds) before generating the final binary
+- **Two-layer validation** — method audit (grid, module, proportions) + robustness audit (no text breaks, consistent radii, harmonic spacing)
+- **Professional output** — 16:9 PPTX up to 100 slides, modular typography, 3-color palette, elementary geometry
 
-**Resultado:** apresentações que parecem ter sido pensadas, não decoradas.
+**Result:** presentations that look considered, not decorated.
 
-## 40 regras de negócio como garantia de qualidade
+## 40 business rules as a quality guarantee
 
-Esta skill não é um conjunto de sugestões — é um sistema de regras derivadas de produção real. Toda peça gerada é validada contra **40 regras antes do output**:
+This skill is not a set of suggestions — it is a rule system derived from real production. Every piece generated is validated against **40 rules before output**:
 
-**12 regras de método (Camada A)**
-Grid modular obrigatório, escala tipográfica em razão fixa, paleta de 3 cores com proporção definida, hierarquia de posição do logo (tr → br → bl), clearance calculado para evitar colisão com o logotipo, unidade coerente por arquivo (px ou pt, nunca os dois).
+**12 method rules (Layer A)**
+Mandatory modular grid, fixed-ratio type scale, 3-color palette with defined proportions, logo position hierarchy (tr → br → bl), calculated clearance zone to prevent logo collision, coherent unit per file (px or pt, never both).
 
-**10 regras de robustez (Camada B)**
-Auditoria de proporção de imagens com fórmulas de crop via sharp, coerência de `border-radius` entre container e filhos, rótulos atômicos com `white-space:nowrap`, bullets tipográficos via `<ul>::before`, proibição de `<br>` em h1-h6 (gera gap no PPTX), caracteres Unicode substituídos por entidades HTML, `linear-gradient` substituído por overlay rgba.
+**10 robustness rules (Layer B)**
+Image proportion audit with sharp crop formulas, `border-radius` coherence between container and children, atomic labels with `white-space:nowrap`, typographic bullets via `<ul>::before`, `<br>` banned inside h1–h6 (causes paragraph gap in PPTX), Unicode characters replaced by HTML entities, `linear-gradient` replaced by rgba overlay.
 
-**18 proibições explícitas**
-Cada uma com justificativa técnica: degradê, sombra, clip art, `border-radius` assimétrico em barras inscritas, colunas com largura não-modular, imagem portrait em célula landscape sem crop, e mais.
+**18 explicit prohibitions**
+Each one with technical justification: gradients, shadows, clip art, asymmetric `border-radius` on inscribed bars, non-modular column widths, portrait image forced into landscape cell without crop, and more.
 
-Regras novas são adicionadas a cada projeto — o número cresce, nunca diminui.
+New rules are added with every project — the number grows, never shrinks.
 
-## Quem criou isto
+## The five pillars (you will not violate)
 
-**Vinicius Saraceni**, ex-aluno de Wollner. Como aluno, absorveu que design é projeto, não arte. Criou esta skill para manter o método vivo — porque o que Wollner ensinou não é moda que expira, é princípio.
+1. **Module as minimum unit** — every measurement is a multiple of the base module (12pt ≡ 16px in html2pptx pipelines).
+2. **Fixed modular grid** — once defined, never broken. Consistency beats flexibility.
+3. **Elementary geometry** — triangle, square and circle only as supporting forms. No clip art.
+4. **Module-derived typography** — fixed-ratio scale, maximum 2 sizes per slide. Clear hierarchy, no noise.
+5. **Restricted palette** — maximum 3 colors with defined proportion (60% background / 30% primary / 10% accent). Less is more.
 
-## Pilares (que você não vai violar)
+## How to use
 
-1. **Módulo como unidade mínima** — toda medida é múltiplo do módulo base (12pt ≡ 16px em pipelines html2pptx).
-2. **Grid modular fixo** — uma vez definido, nunca violado. Coerência > flexibilidade.
-3. **Geometria elementar** — apenas triângulo, quadrado e círculo como formas de suporte. Sem clip art.
-4. **Tipografia derivada do módulo** — escala em razão fixa, máximo 2 tamanhos por slide. Hierarquia clara, sem ruído.
-5. **Paleta restrita** — máximo 3 cores com proporção definida (60% fundo / 30% primária / 10% acento). Menos é mais.
-
-## Como usar
-
-A skill é auto-contida em `scripts/`:
+The skill is self-contained in `scripts/`:
 
 ```bash
 npm install playwright pptxgenjs colorthief node-html-parser
 npx playwright install chromium
 
-node scripts/extract-brand.js https://marca-referencia.com
+node scripts/extract-brand.js https://your-brand-reference.com
 cp scripts/*.template.js ./
-# editar gen-slides.js com paleta + conteúdo
-node gen-slides.js && node screenshot.js    # loop curto
-node build.js                                # PPTX final
+# edit gen-slides.js with palette + content
+node gen-slides.js && node screenshot.js    # fast loop
+node build.js                                # final PPTX
 ```
 
-Detalhes em [`scripts/README.md`](scripts/README.md) e método completo em [`SKILL.md`](SKILL.md).
+Full details in [`scripts/README.md`](scripts/README.md) and complete method in [`SKILL.md`](SKILL.md).
 
-## Instalação como skill do Claude Code
+## Install as a Claude Code skill
 
-Clonar dentro de `~/.claude/skills/`:
+Clone inside `~/.claude/skills/`:
 
 ```bash
 git clone https://github.com/vsaraceni/wollner-design.git ~/.claude/skills/wollner-design
 ```
 
-A skill passa a ser disparada quando o usuário pede "design no estilo Wollner", "grid modular", "layout sistemático" ou mencionar Bauhaus/Swiss/Ulm.
+The skill triggers when the user asks for "Wollner design", "modular grid", "systematic layout", or references Bauhaus / Swiss / Ulm aesthetics.
 
-## Licença e espírito
+## Who built this
 
-Aberto ao público. Use, adapte, republique. O método é do Wollner; a implementação é uma tentativa de mantê-lo vivo.
+**Vinicius Saraceni**, former student of Wollner. He absorbed from him that design is a project, not art. This skill exists to keep the method alive — because what Wollner taught is not a trend that expires, it's a principle.
+
+## License and spirit
+
+Open to everyone. Use it, adapt it, republish it. The method belongs to Wollner; this implementation is an attempt to keep it alive.
