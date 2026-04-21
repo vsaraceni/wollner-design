@@ -331,6 +331,32 @@ Rótulos atômicos curtos são mais robustos e mais Wollner.
 
 **Não usar `nowrap`** em subtítulos longos, descrições, parágrafos de corpo — deixar quebrar naturalmente.
 
+### Coerência de raio entre container e filhos que tocam suas bordas
+
+Quando um elemento filho (bloco colorido, cabeçalho, faixa) encosta numa borda do container arredondado, os cantos que compartilham a mesma quina **devem ter o mesmo raio**. Caso contrário, o arco do container e o canto vivo do filho criam um ângulo de 90° visível dentro do arredondado — efeito de "dente" ou "canto vivo solto".
+
+**Regra:** elemento filho que toca o topo do card → `border-radius: Rpt Rpt 0 0` (raio só nos cantos superiores, igual ao raio do card). Filho que toca o fundo → `border-radius: 0 0 Rpt Rpt`. Filho que preenche o card inteiro → `border-radius: Rpt` (igual ao card).
+
+```html
+<!-- Card com border-radius:4pt -->
+<div style="border-radius:4pt; overflow:hidden; border:1.5pt solid #432272;">
+
+  <!-- Bloco de cabeçalho encostado no topo — cantos superiores = raio do card -->
+  <div style="background:#432272; padding:10pt 12pt; border-radius:2pt 2pt 0 0;">
+    ...
+  </div>
+
+  <!-- Corpo do card — sem raio, os cantos inferiores já são fechados pelo container -->
+  <div style="padding:12pt; background:#fff;">
+    ...
+  </div>
+</div>
+```
+
+**Por que `overflow:hidden` não resolve:** o Playwright/Puppeteer frequentemente não aplica clipping de `border-radius` em filhos via `overflow:hidden` quando o filho preenche exatamente a borda — o resultado é o canto vivo aparecendo no screenshot e no PPTX. A solução estrutural é sempre declarar o raio explicitamente no filho.
+
+**Regra de tamanho:** o raio do filho deve ser igual ao do container menos a espessura da borda, arredondado para o sub-módulo mais próximo. Para card com `border:1.5pt` e `border-radius:4pt`, usar `border-radius:2pt 2pt 0 0` no filho (4 − 1.5 ≈ 2pt). Para card sem borda, usar exatamente o mesmo valor.
+
 ### Barra inscrita dentro de card arredondado
 
 Barra de acento posicionada dentro de um card com `border-radius` é **inscrita**: mais curta que o card nos dois eixos, afastada também da borda lateral, e arredondada nos **quatro cantos** com seu próprio raio pequeno.

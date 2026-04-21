@@ -248,6 +248,7 @@ Ver `scripts/README.md` para comandos exatos e `scripts/requirements.md` para in
 - [ ] Nenhum título de card quebrou em duas linhas indevidamente
 - [ ] Bullets são `<ul>` + `::before` (tipográficos, não `<div>` gráficos)
 - [ ] Raio de cards é sutil (4pt mini, 6pt conteúdo)
+- [ ] Filhos que encostam nas bordas do card têm `border-radius` explícito nas quinas compartilhadas (não confiar em `overflow:hidden`)
 - [ ] Barras inscritas têm `border-radius:2pt` nos 4 cantos e offset nos dois eixos
 - [ ] Logo no rodapé não está sendo comprimido por flex (`flex-shrink:0`)
 - [ ] Todas as imagens passaram pela auditoria de proporção: ratio da célula no slide vs. ratio do arquivo original. Diferença > 20% = flag. Corrigir com crop (sharp) ou ajustar dimensões da célula.
@@ -308,6 +309,7 @@ Detalhes, CSS de referência e gotchas em `references/wollner-ppt-tecnico.md`.
 | Logo em posição arbitrária | Usar hierarquia obrigatória: (1) superior direito se livre; (2) inferior direito se superior ocupado; (3) inferior esquerdo se ambos os cantos direitos ocupados por foto ou conteúdo. Nunca sobrepor imagem. |
 | Título/subtítulo ultrapassando 2/3 da largura | O bloco h1 + p de subtítulo de cada slide nunca deve exceder 2/3 da largura total (480pt de 720pt). Deixa espaço livre para o logo no canto superior direito e evita colisão. Aplicar `max-width:480pt` nesses elementos. |
 | Conteúdo entrando na zona de clearance do logo | Quando o logo está no canto superior direito (tr), ele ocupa um retângulo absoluto de 72pt×31pt a 36pt da borda. Todo conteúdo (h1, cards, textos) na mesma região deve ter max-width calculado para não entrar nessa zona. Fórmula: calcular a posição x do logo no slide (720−36−72=612pt), subtrair a origem da coluna de conteúdo e o padding lateral para obter o max-width seguro do h1. |
+| Elemento filho com canto vivo dentro de container arredondado | Se um bloco filho encosta numa borda do card arredondado, o canto compartilhado deve ter o mesmo raio. `overflow:hidden` não resolve no Playwright — declarar `border-radius` explicitamente no filho (ex: cabeçalho no topo → `border-radius:Rpt Rpt 0 0`). |
 | Bullet como `<div>` gráfico     | Bullet é parte do texto, não elemento dissociado |
 | `border-radius` 8–12pt em cards | Fica infantil; preferir 4–6pt sutil      |
 | Barra inscrita com `border-radius` assimétrico (valor 0 em algum canto) | A barra tem raio próprio; raio parcial parece bug de renderização |
